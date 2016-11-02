@@ -1,0 +1,12 @@
+# File di dati
+*.dat
+
+#LSF job script
+SixTr*.job
+
+#Other files in the run**** folders
+LSFJOB
+STDOUT
+
+# Keep the clean input files in the crystal folders because they contain the configuration parameters of the simulation
+!**/clean_input
