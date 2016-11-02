@@ -57,13 +57,13 @@ public:
 	 * @brief: get the four data of a single event ("orizontal" slice)
 	 * @return: EventoDechanneling is an std::array<Double_t,4>
 	 */
-	EventoDechanneling getEvent(ULong64_t index) const;
+	EventoPassaggio getEvent(ULong64_t index) const;
 
 	/*
 	 * @brief: get number of events
 	 */
 	auto getSize() const {
-		return x_entrata.size();
+		return ipart.size();
 	}
 
 	//TODO getters setters
@@ -71,19 +71,19 @@ private:
 	/*
 	 * Data columns of the file
 	 */
-	std::vector<unsigned long long> ipart;
-	std::vector<unsigned long long> nturn;
-	std::vector<unsigned long long> icoll;
-	std::vector<unsigned short> previous_interaction;
-	std::vector<unsigned short> interaction;
+	std::vector<unsigned long long> ipart;   // Particle ID per run
+	std::vector<unsigned long long> nturn;   // Number of turns
+	std::vector<unsigned long long> icoll;   // ID collimator
+	std::vector<short> previous_interaction; // Result of previous interaction with the collimator
+	std::vector<short> interaction;          // Interaction with the collimator
 
-	std::vector<Double_t> kick_x; // x_uscita - x_entrata
-	std::vector<Double_t> kick_y; // x_uscita - x_entrata
-	std::vector<Double_t> E_in; // x_uscita - x_entrata
-	std::vector<Double_t> E_out; // x_uscita - x_entrata
-	std::vector<Double_t> xp_in; // x_uscita - x_entrata
-	std::vector<Double_t> yp_in; // x_uscita - x_entrata
-	std::vector<Double_t> cr_ang; // x_uscita - x_entrata
+	std::vector<Double_t> kick_x; //  x'_uscita - x'_entrata (' means it's the angle)
+	std::vector<Double_t> kick_y; //  y'_uscita - y'_entrata
+	std::vector<Double_t> E_in;   //  initial energy
+	std::vector<Double_t> E_out;  //  after-interaction energy
+	std::vector<Double_t> xp_in;  //  x'_entrata
+	std::vector<Double_t> yp_in;  //  y'_entrata
+	std::vector<Double_t> cr_ang; //  Crystal orientation
 
 };
 

@@ -42,19 +42,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: ROOT_Eclipse_project
+all: Dechanneling_Simulations
 
 # Tool invocations
-ROOT_Eclipse_project: $(OBJS) $(USER_OBJS)
+Dechanneling_Simulations: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++ $(OBJS) $(USER_OBJS) $(LIBS) -flto -O3 `root-config --libs` -o  "ROOT_Eclipse_project"
+	g++ $(OBJS) $(USER_OBJS) $(LIBS) -flto -O3 `root-config --libs` -o  "Dechanneling_Simulations"
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(CC_DEPS)$(C++_DEPS)$(EXECUTABLES)$(C_UPPER_DEPS)$(CXX_DEPS)$(OBJS)$(CPP_DEPS)$(C_DEPS) ROOT_Eclipse_project
+	-$(RM) $(CC_DEPS)$(C++_DEPS)$(EXECUTABLES)$(C_UPPER_DEPS)$(CXX_DEPS)$(OBJS)$(CPP_DEPS)$(C_DEPS) Dechanneling_Simulations
 	-@echo ' '
 
 .PHONY: all clean dependents

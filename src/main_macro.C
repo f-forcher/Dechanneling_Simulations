@@ -37,7 +37,8 @@
 
 //#include "analizza_dechanneling.h"
 #include "dbg_macro.h"
-#include "Hello.h"
+//#include "Hello.h"
+#include "DatiSimulazioni.h"
 //#include "my_typedefs.h"
 
 
@@ -52,11 +53,23 @@ char PROJECT_DIR[FILENAME_MAX] = "[NOT SET]";
 int main_macro(int argc, char* argv[]) {
 
 	using namespace std;
+	using mions::DatiSimulazioni;
 
-	auto test = new Hello();
 
-	//auto c1 = new TCanvas();
-	//test->Paint();
+	DatiSimulazioni sim_data_test("/home/fforcher/Documents/crystal_simulations/STF45/run0553/cr_interaction.dat");
+	//DatiSimulazioni sim_data_test("test/prova_dat");
+
+/*	if(!sim_data_test) {
+		cerr << "[ERROR]: File not found!" << endl;
+		return -1;
+	}*/
+
+	//sim_data_test.print( sim_data_test.getSize() );
+
+	//DBG( std::clog << "size: " << sim_data_test.getSize() << std::endl; , ; )
+
+	auto c1 = new TCanvas();
+
 
 	return 0;
 }
