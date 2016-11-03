@@ -25,7 +25,4 @@ C_DEPS :=
 SUBDIRS := \
 src/cpp \
 src \
-src/util/src/random/base \
-src/util/src/random/root \
-src/util/src/random/std \
 

@@ -11,12 +11,16 @@
 // Per poter usare questa macro sia compilando che eseguendo.
 // https://root.cern.ch/root/htmldoc/guides/users-guide/ROOTUsersGuide.html#moving-between-interpreter-and-compiler
 #ifndef __CLING__
+
+#include <string>
+
+#include "TH1D.h"
+
 // Se non siamo nell'interprete, ma stiamo compilando, metti la forward declaration perche' verra' linkata quando compili eclipse
 namespace mions {
 
-void read_histograms(string nome_cristallo,
-					 string nomefiledati_dat,
-		 	 	 	 string nomefiledati_root,
+void read_histograms(std::string nome_cristallo,
+					 std::string nomefiledati_dat,
 					 TH1D*& histogram5,
 					 TH1D*& histogram10
 					 );

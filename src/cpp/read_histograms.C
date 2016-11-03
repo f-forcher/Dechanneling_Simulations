@@ -18,10 +18,12 @@
 #include "TH2.h"
 #include "TH1D.h"
 
-#include "dbg_macro.h"
-#include "DatiChanneling.h"
+#include "../dbg_macro.h"
+#include "../my_typedefs.h"
+#include "../DatiSimulazioni.h"
 
-extern bool PREFER_DAT_FILES;
+extern char PROJECT_DIR[];
+
 
 namespace mions {
 using std::string;
@@ -38,7 +40,6 @@ using std::cerr;
 //TODO Finire! Aggiungere tutte le variabili nei parametri
 void read_histograms(string nome_cristallo,
 					 string nomefiledati_dat,
-		 	 	 	 string nomefiledati_root,
 					 TH1D*& histogram5,
 					 TH1D*& histogram10
 					 ) {
@@ -46,8 +47,10 @@ void read_histograms(string nome_cristallo,
 
 	//We should already be inside the right folder
 
-	auto pathfiledati_dat = nomefiledati_dat;
-	auto pathfiledati_root = nomefiledati_root;
+	auto pathfiledati_dat = "./crystal_simulations/" +
+			nome_cristallo + "/"
+			+ nomefiledati_dat;
+
 
 
 	// select +- 5 microrad in nomehisto5, +-10 in nomehisto10
@@ -55,12 +58,12 @@ void read_histograms(string nome_cristallo,
 	string nomehisto10 = "hdati10_" + nome_cristallo;
 	string titlehisto5 = nome_cristallo + ", cuts at +- 5 microrad";
 	string titlehisto10 = nome_cristallo + ", cuts at +- 10 microrad";
-	clog << nomehisto5 << endl;
+	//clog << nomehisto5 << endl;
 
 
 	ifstream file_dat( pathfiledati_dat );
-	auto in_file_root = new TFile( pathfiledati_root.c_str() );
-	if (bool( file_dat ) and (PREFER_DAT_FILES or not in_file_root->IsOpen())) {
+
+	if ( bool( file_dat ) ) {
 		// Il codice per la mia analisi qua
 
 		//gStyle->SetPalette(1);
@@ -73,26 +76,33 @@ void read_histograms(string nome_cristallo,
 				clog << "[LOG]: " << "Crystal " << nome_cristallo << endl; clog << "[LOG]: File "<< nomefiledati_dat << endl << endl;,
 				; )
 		clog << "[LOG]: Using .dat file";
-		 */
+		*/
 
 		//ifstream file_dat(pathfiledati);
 
 		//Riempi gli istogrammi
-		DatiChanneling dati( pathfiledati_dat );
-		auto in_file_root = new TFile( nomefiledati_root.c_str() );
+		DatiSimulazioni dati( pathfiledati_dat );
 
-		EventoDechanneling ev;
+		EventoPassaggio ev;
 		auto datisize = dati.getSize();
 
-		auto histogram5_dat = new TH1D(
-		/* name */nomehisto5.c_str(),
-		/* title */titlehisto5.c_str(),
-		/* X-dimension */600 / 4, -200, 400 );
+		TH1D* histogram5_dat;
+		TH1D* histogram10_dat;
 
-		auto histogram10_dat = new TH1D(
-		/* name */nomehisto10.c_str(),
-		/* title */titlehisto10.c_str(),
-		/* X-dimension */600 / 4, -200, 400 );
+		if (histogram5 == nullptr or histogram10 == nullptr) {
+			histogram5_dat = new TH1D(
+			/* name */nomehisto5.c_str(),
+			/* title */titlehisto5.c_str(),
+			/* X-dimension */600 / 4, -200, 400 );
+
+			histogram10_dat = new TH1D(
+			/* name */nomehisto10.c_str(),
+			/* title */titlehisto10.c_str(),
+			/* X-dimension */600 / 4, -200, 400 );
+		} else {
+			histogram5_dat = histogram5;
+			histogram10_dat = histogram10;
+		}
 
 		//dati.print(datisize);
 
@@ -100,88 +110,29 @@ void read_histograms(string nome_cristallo,
 		for (ULong64_t i = 0; i < datisize; ++i) {
 
 			ev = dati.getEvent( i );
-			Double_t x_entrata = ev[0];
-			Double_t x_uscita = ev[2];
+			// #1=ipart 2=nturn 3=icoll 4=previous interaction 5=interaction
+			//          6=kick_x 7=kick_y 8=E_in 9=E_out 10=xp_in 11=yp_in 12=cr_ang
+			Double_t x_entrata = ev[9];
+			Double_t delta_x = ev[5]; //x_uscita - x_entrata
 
-			if (x_entrata > -5 and x_entrata < 5) {
+			DBG( std::clog << "delta_x: " << delta_x << std::endl; , ; )
+			if (x_entrata / MICRO_ > -5 and x_entrata / MICRO_ < 5) {
 				//vHistograms.front()->Fill(x_uscita-x_entrata);
-				histogram5_dat->Fill( x_uscita - x_entrata );
+				histogram5_dat->Fill( delta_x * 1e6 );
 			}
 
-			if (x_entrata > -10 and x_entrata < 10) {
+			if (x_entrata / MICRO_ > -10 and x_entrata / MICRO_ < 10) {
 				//vHistograms.front()->Fill(x_uscita-x_entrata);
-				histogram10_dat->Fill( x_uscita - x_entrata );
+				histogram10_dat->Fill( delta_x * 1e6);
 			}
 		}
+
+		// Should be correct in either cases of the "if" above
 		histogram5 = histogram5_dat;
 		histogram10 = histogram10_dat;
 		// Technically not necessary now, but maybe I'll add more conditions
-	} else if (not bool( file_dat ) or (not PREFER_DAT_FILES or in_file_root->IsOpen())) {
-
-		// Check if .root exist
-		if (!(in_file_root->IsOpen())) {
-			cerr << "[ERROR] Crystal " << nome_cristallo << endl;
-			cerr << "[ERROR]: File .root not found!" << endl;
-			return;
-		}
-
-		auto h2D = (TH2D*) in_file_root->Get( "dTheta_x_vs_Impact_x_cor" );
-		//auto h1D = h2D->ProjectionY();
-
-		auto axis = h2D->GetXaxis();
-
-		auto min5 = axis->FindBin( -5. );
-		auto max5 = axis->FindBin( 5. );
-
-		auto min10 = axis->FindBin( -10. );
-		auto max10 = axis->FindBin( 10. );
-
-		cout << "bin cut" << endl;
-		cout << "  -5 -> " << min5 << "   5 -> " << max5 << endl;
-		cout << " -10 -> " << min10 << "  10 -> " << max10 << endl;
-
-		auto h5 = (TH1D*) (h2D->ProjectionY( titlehisto5.c_str(), min5, max5 ));
-		h5->GetXaxis()->SetTitle( "#Delta#theta_{x} [#murad]" );
-		h5->Rebin( 4 );
-		auto h10 = (TH1D*) (h2D->ProjectionY( titlehisto10.c_str(), min10, max10 ));
-		h10->GetXaxis()->SetTitle( "#Delta#theta_{x} [#murad]" );
-		h10->Rebin( 4 );
-
-		//Crystal qmp36 has been mounted reversed, so we must flip the graph along x axis
-		if (nome_cristallo == string( "QMP36" )) {
-			clog << "QMP36, flipping the histogram orizontally" << endl;
-			auto h5_qmp36_new = new TH1D(
-			/* name */nomehisto5.c_str(),
-			/* title */titlehisto5.c_str(),
-			/* X-dimension */800 / 4, -400, 400 );
-			auto h10_qmp36_new = new TH1D(
-			/* name */nomehisto10.c_str(),
-			/* title */titlehisto10.c_str(),
-			/* X-dimension */800 / 4, -400, 400 );
-			auto nbin = h5->GetNbinsX();
-
-			for (auto i = 0; i <= nbin; ++i) {
-				h5_qmp36_new->SetBinContent( nbin - i, h5->GetBinContent( i ) );
-				h10_qmp36_new->SetBinContent( nbin - i, h10->GetBinContent( i ) );
-			}
-
-			histogram5 = h5_qmp36_new;
-			histogram10 = h10_qmp36_new;
-
-			histogram5->SetTitle( titlehisto5.c_str() );
-			histogram10->SetTitle( titlehisto10.c_str() );
-
-			//h5_qmp36
-
-		} else {
-			histogram5 = h5;
-			histogram10 = h10;
-
-			histogram5->SetTitle( titlehisto5.c_str() );
-			histogram10->SetTitle( titlehisto10.c_str() );
-		}
-	} else {
-		cerr << "[ERROR]: Logic error, at line: " << __LINE__ << endl;
+	}  else {
+		cerr << "[ERROR]: File .dat not opened!" << endl;
 		return;
 	}
 

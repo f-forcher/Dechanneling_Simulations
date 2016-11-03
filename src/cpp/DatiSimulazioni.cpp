@@ -119,18 +119,20 @@ void DatiSimulazioni::print(ULong64_t from, ULong64_t to) const {
 EventoPassaggio DatiSimulazioni::getEvent(ULong64_t index) const {
 	EventoPassaggio ev;
 
-	ev[0]  = nturn[index];
-	ev[1]  = icoll[index];
-	ev[2]  = previous_interaction[index];
-	ev[3]  = interaction[index];
+	ev[0]  = ipart[index];
+	ev[1]  = nturn[index];
+	ev[2]  = icoll[index];
+	ev[3]  = previous_interaction[index];
+	ev[4]  = interaction[index];
 
-	ev[4]  = kick_x[index];
-	ev[5]  = kick_y[index];
-	ev[6]  = E_in[index];
-	ev[7]  = E_out[index];
-	ev[8]  = xp_in[index];
-	ev[9]  = yp_in[index];
-	ev[10] = cr_ang[index];
+
+	ev[5]  = kick_x[index];
+	ev[6]  = kick_y[index];
+	ev[7]  = E_in[index];
+	ev[8]  = E_out[index];
+	ev[9]  = xp_in[index];
+	ev[10]  = yp_in[index];
+	ev[11] = cr_ang[index];
 
 	return ev;
 }
