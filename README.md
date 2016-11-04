@@ -1,4 +1,4 @@
-# Ronch-braggPlot_v05
+# Dechanneling simulations
 
 ##Installation/Preliminary operations
 1. Install/compile the various versions of ROOT and put them in ~/ROOT/vXX-XX-XX (eg "~/ROOT/v5-34-36").
