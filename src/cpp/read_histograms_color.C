@@ -37,10 +37,14 @@ using std::cerr;
 
 
 
-void read_histograms(string nome_cristallo,
-					 string nomefiledati_dat,
-					 TH1D*& histogram5,
-					 TH1D*& histogram10
+//TODO Finire!
+
+void read_histograms_color(std::string nome_cristallo,
+					 std::string nomefiledati_dat,
+					 Double_t cut,
+					 TH1D*& histogramAm,
+					 TH1D*& histogramDech,
+					 TH1D*& histogramCh,
 					 ) {
 
 
@@ -53,10 +57,12 @@ void read_histograms(string nome_cristallo,
 
 
 	// select +- 5 microrad in nomehisto5, +-10 in nomehisto10
-	string nomehisto5 = "hdati5_" + nome_cristallo;
-	string nomehisto10 = "hdati10_" + nome_cristallo;
-	string titlehisto5 = nome_cristallo + ", cuts at +- 5 microrad";
-	string titlehisto10 = nome_cristallo + ", cuts at +- 10 microrad";
+	string nomehistoAm = "Amorphous_" + nome_cristallo;
+	string nomehistoDech = "Dechanneling_" + nome_cristallo;
+	string nomehistoCh = "Channeling_" + nome_cristallo;
+	string titlehistoAm = nome_cristallo + ", amorphous fraction";
+	string titlehistoDech = nome_cristallo + ", dechanneling fraction";
+	string titlehistoCh = nome_cristallo + ", channeling fraction";
 	//clog << nomehisto5 << endl;
 
 
@@ -85,22 +91,29 @@ void read_histograms(string nome_cristallo,
 		EventoPassaggio ev;
 		auto datisize = dati.getSize();
 
-		TH1D* histogram5_dat;
-		TH1D* histogram10_dat;
+		TH1D* histogramAm_dat;
+		TH1D* histogramDech_dat;
+		TH1D* histogramCh_dat;
 
-		if (histogram5 == nullptr or histogram10 == nullptr) {
-			histogram5_dat = new TH1D(
-			/* name */nomehisto5.c_str(),
-			/* title */titlehisto5.c_str(),
+		if (histogramAm_dat == nullptr or histogramDech_dat == nullptr or histogramCh_dat == nullptr) {
+			histogramAm_dat = new TH1D(
+			/* name */nomehistoAm.c_str(),
+			/* title */titlehistoAm.c_str(),
 			/* X-dimension */600 / 4, -200, 400 );
 
-			histogram10_dat = new TH1D(
-			/* name */nomehisto10.c_str(),
-			/* title */titlehisto10.c_str(),
+			histogramDech_dat = new TH1D(
+			/* name */nomehistoDech.c_str(),
+			/* title */titlehistoDech.c_str(),
+			/* X-dimension */600 / 4, -200, 400 );
+
+			histogramCh_dat = new TH1D(
+			/* name */nomehistoCh.c_str(),
+			/* title */titlehistoCh.c_str(),
 			/* X-dimension */600 / 4, -200, 400 );
 		} else {
-			histogram5_dat = histogram5;
-			histogram10_dat = histogram10;
+			histogramAm_dat = histogramAm;
+			histogramDech_dat = histogramDech;
+			histogramCh_dat = histogramCh;
 		}
 
 		//dati.print(datisize);
@@ -111,18 +124,20 @@ void read_histograms(string nome_cristallo,
 			ev = dati.getEvent( i );
 			// #1=ipart 2=nturn 3=icoll 4=previous interaction 5=interaction
 			//          6=kick_x 7=kick_y 8=E_in 9=E_out 10=xp_in 11=yp_in 12=cr_ang
+			long interaction = std::lround(ev[4]);
 			Double_t x_entrata = ev[9];
 			Double_t delta_x = ev[5]; //x_uscita - x_entrata
 
 			DBG( std::clog << "delta_x: " << delta_x << std::endl; , ; )
-			if (x_entrata / MICRO_ > -5 and x_entrata / MICRO_ < 5) {
+			if (x_entrata / MICRO_ > -cut and x_entrata / MICRO_ < cut) {
 				//vHistograms.front()->Fill(x_uscita-x_entrata);
-				histogram5_dat->Fill( delta_x * 1e6 );
-			}
-
-			if (x_entrata / MICRO_ > -10 and x_entrata / MICRO_ < 10) {
-				//vHistograms.front()->Fill(x_uscita-x_entrata);
-				histogram10_dat->Fill( delta_x * 1e6);
+				switch (interaction) {
+					case value:
+						histogram5_dat->Fill( - delta_x * 1e6 );
+						break;
+					default:
+						break;
+				}
 			}
 		}
 

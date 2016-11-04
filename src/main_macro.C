@@ -71,7 +71,6 @@ int main_macro(int argc, char* argv[]) {
 //	sim_data_test.print( sim_data_test.getSize() );
 //	DBG( std::clog << "size: " << sim_data_test.getSize() << std::endl
 //	; , ; )
-
 	std::vector<const char*> elenco_cristalli_sim { "STF45" //,
 	//"STF49",
 	};
@@ -84,9 +83,10 @@ int main_macro(int argc, char* argv[]) {
 		TH1D* histogram10 = nullptr;
 
 		for (auto i = 1; i <= 1000; ++i) {
-			snprintf( numero_run, FILENAME_MAX, "%04d", i );
-			string nome_file_dat = string("run") + numero_run + "/cr_interaction.dat";
-			DBG( std::clog << "nome_file_dat: " << nome_file_dat << std::endl; , ; )
+			snprintf( numero_run, FILENAME_MAX, "%04d", i ); // print the number of the simulation job to select, with trailing zeroes
+			string nome_file_dat = string( "run" ) + numero_run + "/cr_interaction.dat"; // e.g. run0321/cr_interaction.dat
+			DBG( std::clog << "nome_file_dat: " << nome_file_dat << std::endl
+			; , ; )
 			clog << numero_run << std::endl;
 			mions::read_histograms( crystal_name, "run0002/cr_interaction.dat", histogram5, histogram10 );
 		}
