@@ -41,6 +41,7 @@
 //#include "Hello.h"
 #include "DatiSimulazioni.h"
 #include "read_histograms.h"
+#include "read_histograms_color.h"
 //#include "my_typedefs.h"
 
 //GLOBALS meglio in un file a parte
@@ -82,22 +83,77 @@ int main_macro(int argc, char* argv[]) {
 		TH1D* histogram5 = nullptr;
 		TH1D* histogram10 = nullptr;
 
+		TH1D* histogramAm = nullptr;
+		TH1D* histogramDech = nullptr;
+		TH1D* histogramCh = nullptr;
+		TH1D* histogramOth = nullptr;
+
 		for (auto i = 1; i <= 1000; ++i) {
 			snprintf( numero_run, FILENAME_MAX, "%04d", i ); // print the number of the simulation job to select, with trailing zeroes
 			string nome_file_dat = string( "run" ) + numero_run + "/cr_interaction.dat"; // e.g. run0321/cr_interaction.dat
 			DBG( std::clog << "nome_file_dat: " << nome_file_dat << std::endl
 			; , ; )
 			clog << numero_run << std::endl;
-			mions::read_histograms( crystal_name, "run0002/cr_interaction.dat", histogram5, histogram10 );
+			//mions::read_histograms( crystal_name, "run0002/cr_interaction.dat", histogram5, histogram10 );
+
+			mions::read_histograms_color( crystal_name, "run0002/cr_interaction.dat", 10, histogramAm, histogramDech, histogramCh, histogramOth );
 		}
 
-		string canvas_name = "Crystal simulation: " + crystal_name;
-		auto cSim = new TCanvas( "cRcLd", canvas_name.c_str() );
-		cSim->Divide( 2, 1 );
-		cSim->cd( 1 );
-		histogram5->Draw();
-		cSim->cd( 2 );
-		histogram10->Draw();
+//		string canvas_name = "Crystal simulation: " + crystal_name;
+//		auto cSim = new TCanvas( "cRcLd", canvas_name.c_str() );
+//		cSim->Divide( 2, 1 );
+//		cSim->cd( 1 );
+//		histogram5->Draw();
+//		cSim->cd( 2 );
+//		histogram10->Draw();
+
+		string canvas_name_color = "Crystal simulation: " + crystal_name + "color coded";
+		auto cColor = new TCanvas( "cSimColor", canvas_name_color.c_str() );
+//		cColor->Divide( 3, 1 );
+//		cColor->cd( 1 );
+//		histogramAm->Draw();
+//		cColor->cd( 2 );
+//		histogramDech->Draw();
+//		cColor->cd( 3 );
+//		histogramCh->Draw();
+
+		histogramAm->   SetFillColorAlpha(kBlue,0.4);
+		histogramDech-> SetFillColorAlpha(kRed,0.4);
+		histogramCh->   SetFillColorAlpha(kGreen,0.4);
+		histogramOth->  SetFillColorAlpha(kMagenta,0.4);
+
+		//Normalize, for confronting with the data
+//		histogramAm->Scale(1.0/histogramAm->Integral());
+//		histogramCh->Scale(1.0/histogramCh->Integral());
+//		histogramDech->Scale(1.0/histogramDech->Integral());
+//		histogramOth->Scale(1.0/histogramOth->Integral());
+
+		auto totint = histogramAm->Integral() +
+				histogramCh->Integral() +
+				histogramDech->Integral() +
+				histogramOth->Integral();
+		histogramAm->Scale(1.0/totint);
+		histogramCh->Scale(1.0/totint);
+		histogramDech->Scale(1.0/totint);
+		histogramOth->Scale(1.0/totint);
+
+
+		histogramAm   -> Draw();
+		histogramCh   -> Draw("same");
+		histogramDech -> Draw("same");
+		histogramOth  -> Draw("same");
+
+
+		// Experimental data
+		string nomefile_dati_sperimentali = "../Old_Macros_Dechanneling/Dechanneling_Histograms.root";
+		TFile * dati_sperimentali = new TFile( nomefile_dati_sperimentali.c_str() );
+		TH1D * hDatiSper = (TH1D*) dati_sperimentali->Get( "hdati10_STF45" );
+
+		hDatiSper->Scale(1.0/hDatiSper->Integral());
+
+		hDatiSper->  SetLineColor(kRed);
+		hDatiSper -> Draw("same");
+
 	}
 
 	return 0;

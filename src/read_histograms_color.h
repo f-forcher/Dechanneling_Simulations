@@ -28,12 +28,13 @@ namespace mions {
  * @histogramCh: Channeling histogram
  */
 void read_histograms_color(std::string nome_cristallo,
-					 std::string nomefiledati_dat,
-					 Double_t cut,
-					 TH1D*& histogramAm,
-					 TH1D*& histogramDech,
-					 TH1D*& histogramCh,
-					 );
+		std::string nomefiledati_dat,
+		Double_t cut,
+		TH1D*& histogramAm,
+		TH1D*& histogramDech,
+		TH1D*& histogramCh,
+		TH1D*& histogramOth
+		);
 
 }
 #else

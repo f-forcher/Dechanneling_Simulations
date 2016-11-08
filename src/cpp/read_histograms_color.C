@@ -24,7 +24,6 @@
 
 extern char PROJECT_DIR[];
 
-
 namespace mions {
 using std::string;
 using std::ifstream;
@@ -35,40 +34,39 @@ using std::cout;
 using std::clog;
 using std::cerr;
 
-
-
 //TODO Finire!
 
-void read_histograms_color(std::string nome_cristallo,
-					 std::string nomefiledati_dat,
-					 Double_t cut,
-					 TH1D*& histogramAm,
-					 TH1D*& histogramDech,
-					 TH1D*& histogramCh,
-					 ) {
 
+static unsigned long long totalnumdati = 0;
+
+void read_histograms_color(std::string nome_cristallo,
+		std::string nomefiledati_dat,
+		Double_t cut,
+		TH1D*& histogramAm,
+		TH1D*& histogramDech,
+		TH1D*& histogramCh,
+		TH1D*& histogramOth
+		) {
 
 	//We should already be inside the right folder
 
-	auto pathfiledati_dat = "./crystal_simulations/" +
-			nome_cristallo + "/"
-			+ nomefiledati_dat;
-
-
+	auto pathfiledati_dat = "./crystal_simulations/" + nome_cristallo + "/" + nomefiledati_dat;
 
 	// select +- 5 microrad in nomehisto5, +-10 in nomehisto10
 	string nomehistoAm = "Amorphous_" + nome_cristallo;
 	string nomehistoDech = "Dechanneling_" + nome_cristallo;
 	string nomehistoCh = "Channeling_" + nome_cristallo;
+	string nomehistoOth = "Other_" + nome_cristallo;
+
 	string titlehistoAm = nome_cristallo + ", amorphous fraction";
 	string titlehistoDech = nome_cristallo + ", dechanneling fraction";
 	string titlehistoCh = nome_cristallo + ", channeling fraction";
+	string titlehistoOth = nome_cristallo + ", other fraction";
 	//clog << nomehisto5 << endl;
-
 
 	ifstream file_dat( pathfiledati_dat );
 
-	if ( bool( file_dat ) ) {
+	if (bool( file_dat )) {
 		// Il codice per la mia analisi qua
 
 		//gStyle->SetPalette(1);
@@ -77,25 +75,28 @@ void read_histograms_color(std::string nome_cristallo,
 		//TGaxis::SetMaxDigits(3);
 
 		/*
-		DBG(
-				clog << "[LOG]: " << "Crystal " << nome_cristallo << endl; clog << "[LOG]: File "<< nomefiledati_dat << endl << endl;,
-				; )
-		clog << "[LOG]: Using .dat file";
-		*/
+		 DBG(
+		 clog << "[LOG]: " << "Crystal " << nome_cristallo << endl; clog << "[LOG]: File "<< nomefiledati_dat << endl << endl;,
+		 ; )
+		 clog << "[LOG]: Using .dat file";
+		 */
 
 		//ifstream file_dat(pathfiledati);
-
 		//Riempi gli istogrammi
 		DatiSimulazioni dati( pathfiledati_dat );
 
 		EventoPassaggio ev;
 		auto datisize = dati.getSize();
+		totalnumdati = totalnumdati + datisize;
+		std::clog << "totalnumdati: " << totalnumdati << std::endl;
 
 		TH1D* histogramAm_dat;
 		TH1D* histogramDech_dat;
 		TH1D* histogramCh_dat;
+		TH1D* histogramOth_dat;
 
-		if (histogramAm_dat == nullptr or histogramDech_dat == nullptr or histogramCh_dat == nullptr) {
+		if (histogramAm == nullptr or histogramDech == nullptr or histogramCh == nullptr
+				|| histogramOth == nullptr) {
 			histogramAm_dat = new TH1D(
 			/* name */nomehistoAm.c_str(),
 			/* title */titlehistoAm.c_str(),
@@ -110,10 +111,16 @@ void read_histograms_color(std::string nome_cristallo,
 			/* name */nomehistoCh.c_str(),
 			/* title */titlehistoCh.c_str(),
 			/* X-dimension */600 / 4, -200, 400 );
+
+			histogramOth_dat = new TH1D(
+			/* name */nomehistoOth.c_str(),
+			/* title */titlehistoOth.c_str(),
+			/* X-dimension */600 / 4, -200, 400 );
 		} else {
 			histogramAm_dat = histogramAm;
 			histogramDech_dat = histogramDech;
 			histogramCh_dat = histogramCh;
+			histogramOth_dat = histogramOth;
 		}
 
 		//dati.print(datisize);
@@ -124,28 +131,38 @@ void read_histograms_color(std::string nome_cristallo,
 			ev = dati.getEvent( i );
 			// #1=ipart 2=nturn 3=icoll 4=previous interaction 5=interaction
 			//          6=kick_x 7=kick_y 8=E_in 9=E_out 10=xp_in 11=yp_in 12=cr_ang
-			long interaction = std::lround(ev[4]);
+			long interaction = std::lround( ev[4] );
 			Double_t x_entrata = ev[9];
 			Double_t delta_x = ev[5]; //x_uscita - x_entrata
 
-			DBG( std::clog << "delta_x: " << delta_x << std::endl; , ; )
+			DBG( std::clog << "delta_x: " << delta_x << std::endl
+			; , ; )
 			if (x_entrata / MICRO_ > -cut and x_entrata / MICRO_ < cut) {
 				//vHistograms.front()->Fill(x_uscita-x_entrata);
 				switch (interaction) {
-					case value:
-						histogram5_dat->Fill( - delta_x * 1e6 );
-						break;
-					default:
-						break;
+				case 1:
+					histogramAm_dat->Fill(  -delta_x / MICRO_ );
+					break;
+				case 3:
+					histogramDech_dat->Fill(-delta_x / MICRO_ );
+					break;
+				case 6:
+					histogramCh_dat->Fill(  -delta_x / MICRO_ );
+					break;
+				default:
+					histogramOth_dat->Fill( -delta_x / MICRO_);
+					break;
 				}
 			}
 		}
 
 		// Should be correct in either cases of the "if" above
-		histogram5 = histogram5_dat;
-		histogram10 = histogram10_dat;
+		histogramAm = histogramAm_dat;
+		histogramDech = histogramDech_dat;
+		histogramCh = histogramCh_dat;
+		histogramOth = histogramOth_dat;
 		// Technically not necessary now, but maybe I'll add more conditions
-	}  else {
+	} else {
 		cerr << "[ERROR]: File .dat not opened!" << endl;
 		return;
 	}
