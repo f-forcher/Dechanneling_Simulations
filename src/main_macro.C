@@ -87,6 +87,7 @@ int main_macro(int argc, char* argv[]) {
 		TH1D* histogramDech = nullptr;
 		TH1D* histogramCh = nullptr;
 		TH1D* histogramOth = nullptr;
+		TH1D* histogramTot = nullptr;
 
 		for (auto i = 1; i <= 1000; ++i) {
 			snprintf( numero_run, FILENAME_MAX, "%04d", i ); // print the number of the simulation job to select, with trailing zeroes
@@ -117,10 +118,22 @@ int main_macro(int argc, char* argv[]) {
 //		cColor->cd( 3 );
 //		histogramCh->Draw();
 
+		histogramTot = new TH1D(
+						/* name */"total_histo",
+						/* title */"Total Histogram",
+						/* X-dimension */600 / 4, -200, 400 );
+		histogramTot->Add(histogramAm);
+		histogramTot->Add(histogramDech);
+		histogramTot->Add(histogramCh);
+		histogramTot->Add(histogramOth);
+
+
+
 		histogramAm->   SetFillColorAlpha(kBlue,0.4);
 		histogramDech-> SetFillColorAlpha(kRed,0.4);
 		histogramCh->   SetFillColorAlpha(kGreen,0.4);
 		histogramOth->  SetFillColorAlpha(kMagenta,0.4);
+		histogramTot->  SetLineColor(kGreen);
 
 		//Normalize, for confronting with the data
 //		histogramAm->Scale(1.0/histogramAm->Integral());
@@ -136,13 +149,14 @@ int main_macro(int argc, char* argv[]) {
 		histogramCh->Scale(1.0/totint);
 		histogramDech->Scale(1.0/totint);
 		histogramOth->Scale(1.0/totint);
+		histogramTot->Scale(1.0/histogramTot->Integral() );
 
 
-		histogramAm   -> Draw();
-		histogramCh   -> Draw("same");
-		histogramDech -> Draw("same");
-		histogramOth  -> Draw("same");
-
+		//histogramAm   -> Draw();
+		//histogramCh   -> Draw("same");
+		//histogramDech -> Draw("same");
+		//histogramOth  -> Draw("same");
+		histogramTot  -> Draw("same");
 
 		// Experimental data
 		string nomefile_dati_sperimentali = "../Old_Macros_Dechanneling/Dechanneling_Histograms.root";
