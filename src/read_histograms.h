@@ -22,7 +22,9 @@ namespace mions {
 void read_histograms(std::string nome_cristallo,
 					 std::string nomefiledati_dat,
 					 TH1D*& histogram5,
-					 TH1D*& histogram10
+					 TH1D*& histogram5_rnd,
+					 TH1D*& histogram10,
+					 TH1D*& histogram10_rnd
 					 );
 
 }

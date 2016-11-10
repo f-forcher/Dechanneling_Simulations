@@ -72,8 +72,10 @@ int main_macro(int argc, char* argv[]) {
 //	sim_data_test.print( sim_data_test.getSize() );
 //	DBG( std::clog << "size: " << sim_data_test.getSize() << std::endl
 //	; , ; )
-	std::vector<const char*> elenco_cristalli_sim { "STF45" //,
-	//"STF49",
+	std::vector<const char*> elenco_cristalli_sim {
+		//"STF45",
+		"STF49"
+		//"STF99"
 	};
 
 	char numero_run[FILENAME_MAX];
@@ -82,6 +84,8 @@ int main_macro(int argc, char* argv[]) {
 
 		TH1D* histogram5 = nullptr;
 		TH1D* histogram10 = nullptr;
+		TH1D* histogram5_rnd = nullptr;
+		TH1D* histogram10_rnd = nullptr;
 
 		TH1D* histogramAm = nullptr;
 		TH1D* histogramDech = nullptr;
@@ -95,9 +99,9 @@ int main_macro(int argc, char* argv[]) {
 			DBG( std::clog << "nome_file_dat: " << nome_file_dat << std::endl
 			; , ; )
 			clog << numero_run << std::endl;
-			//mions::read_histograms( crystal_name, "run0002/cr_interaction.dat", histogram5, histogram10 );
+			mions::read_histograms( crystal_name, nome_file_dat, histogram5, histogram5_rnd, histogram10, histogram10_rnd );
 
-			mions::read_histograms_color( crystal_name, "run0002/cr_interaction.dat", 10, histogramAm, histogramDech, histogramCh, histogramOth );
+			mions::read_histograms_color( crystal_name, nome_file_dat, 10, histogramAm, histogramDech, histogramCh, histogramOth );
 		}
 
 //		string canvas_name = "Crystal simulation: " + crystal_name;
@@ -156,16 +160,24 @@ int main_macro(int argc, char* argv[]) {
 		//histogramCh   -> Draw("same");
 		//histogramDech -> Draw("same");
 		//histogramOth  -> Draw("same");
-		histogramTot  -> Draw("same");
+		//histogramTot  -> Draw("same");
+
+
 
 		// Experimental data
 		string nomefile_dati_sperimentali = "../Old_Macros_Dechanneling/Dechanneling_Histograms.root";
 		TFile * dati_sperimentali = new TFile( nomefile_dati_sperimentali.c_str() );
-		TH1D * hDatiSper = (TH1D*) dati_sperimentali->Get( "hdati10_STF45" );
+		string nomehistoSper = "hdati10_" + string(crys); //TODO Generalizzare a un file
+		TH1D * hDatiSper = (TH1D*) dati_sperimentali->Get( nomehistoSper.c_str() );
 
-		hDatiSper->Scale(1.0/hDatiSper->Integral());
+//		histogram10->Scale(1.0/histogram10->Integral());
+//		hDatiSper->Scale(1.0/hDatiSper->Integral());
 
-		hDatiSper->  SetLineColor(kRed);
+		histogram10->Scale(1.0/histogram10->GetEntries());
+		hDatiSper->Scale(1.0/hDatiSper->GetEntries());
+
+		hDatiSper -> SetLineColor(kRed);
+		histogram10 -> Draw();
 		hDatiSper -> Draw("same");
 
 	}

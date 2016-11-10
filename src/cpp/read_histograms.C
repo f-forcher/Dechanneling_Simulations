@@ -37,10 +37,12 @@ using std::cerr;
 
 
 
-void read_histograms(string nome_cristallo,
-					 string nomefiledati_dat,
+void read_histograms(std::string nome_cristallo,
+					 std::string nomefiledati_dat,
 					 TH1D*& histogram5,
-					 TH1D*& histogram10
+					 TH1D*& histogram5_rnd,
+					 TH1D*& histogram10,
+					 TH1D*& histogram10_rnd
 					 ) {
 
 
@@ -54,9 +56,13 @@ void read_histograms(string nome_cristallo,
 
 	// select +- 5 microrad in nomehisto5, +-10 in nomehisto10
 	string nomehisto5 = "hdati5_" + nome_cristallo;
+	string nomehisto5_rnd = "hdati5_" + nome_cristallo;
 	string nomehisto10 = "hdati10_" + nome_cristallo;
+	string nomehisto10_rnd = "hdati10_" + nome_cristallo;
 	string titlehisto5 = nome_cristallo + ", cuts at +- 5 microrad";
+	string titlehisto5_rnd = nome_cristallo + ", cuts at +- 5 microrad";
 	string titlehisto10 = nome_cristallo + ", cuts at +- 10 microrad";
+	string titlehisto10_rnd = nome_cristallo + ", cuts at +- 5 microrad";
 	//clog << nomehisto5 << endl;
 
 
@@ -92,12 +98,12 @@ void read_histograms(string nome_cristallo,
 			histogram5_dat = new TH1D(
 			/* name */nomehisto5.c_str(),
 			/* title */titlehisto5.c_str(),
-			/* X-dimension */600 / 4, -200, 400 );
+			/* X-dimension */600 / 3, -200, 400 );
 
 			histogram10_dat = new TH1D(
 			/* name */nomehisto10.c_str(),
 			/* title */titlehisto10.c_str(),
-			/* X-dimension */600 / 4, -200, 400 );
+			/* X-dimension */600 / 3, -200, 400 );
 		} else {
 			histogram5_dat = histogram5;
 			histogram10_dat = histogram10;
@@ -117,12 +123,12 @@ void read_histograms(string nome_cristallo,
 			DBG( std::clog << "delta_x: " << delta_x << std::endl; , ; )
 			if (x_entrata / MICRO_ > -5 and x_entrata / MICRO_ < 5) {
 				//vHistograms.front()->Fill(x_uscita-x_entrata);
-				histogram5_dat->Fill( delta_x * 1e6 );
+				histogram5_dat->Fill( -delta_x * 1e6 );
 			}
 
 			if (x_entrata / MICRO_ > -10 and x_entrata / MICRO_ < 10) {
 				//vHistograms.front()->Fill(x_uscita-x_entrata);
-				histogram10_dat->Fill( delta_x * 1e6);
+				histogram10_dat->Fill( -delta_x * 1e6);
 			}
 		}
 
