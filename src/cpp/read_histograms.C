@@ -17,6 +17,8 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TH1D.h"
+#include "TRandom.h"
+#include "TRandom3.h"
 
 #include "../dbg_macro.h"
 #include "../my_typedefs.h"
@@ -56,13 +58,13 @@ void read_histograms(std::string nome_cristallo,
 
 	// select +- 5 microrad in nomehisto5, +-10 in nomehisto10
 	string nomehisto5 = "hdati5_" + nome_cristallo;
-	string nomehisto5_rnd = "hdati5_" + nome_cristallo;
+	string nomehisto5_rnd = "hdati5_rnd_" + nome_cristallo;
 	string nomehisto10 = "hdati10_" + nome_cristallo;
-	string nomehisto10_rnd = "hdati10_" + nome_cristallo;
+	string nomehisto10_rnd = "hdati10_rnd_" + nome_cristallo;
 	string titlehisto5 = nome_cristallo + ", cuts at +- 5 microrad";
-	string titlehisto5_rnd = nome_cristallo + ", cuts at +- 5 microrad";
+	string titlehisto5_rnd = nome_cristallo + ", cuts at +- 5 microrad, randomized";
 	string titlehisto10 = nome_cristallo + ", cuts at +- 10 microrad";
-	string titlehisto10_rnd = nome_cristallo + ", cuts at +- 5 microrad";
+	string titlehisto10_rnd = nome_cristallo + ", cuts at +- 5 microrad, randomized";
 	//clog << nomehisto5 << endl;
 
 
@@ -93,20 +95,36 @@ void read_histograms(std::string nome_cristallo,
 
 		TH1D* histogram5_dat;
 		TH1D* histogram10_dat;
+		TH1D* histogram5_rnd_dat;
+		TH1D* histogram10_rnd_dat;
+
+		TRandom* rnd = new TRandom3();
 
 		if (histogram5 == nullptr or histogram10 == nullptr) {
 			histogram5_dat = new TH1D(
 			/* name */nomehisto5.c_str(),
 			/* title */titlehisto5.c_str(),
-			/* X-dimension */600 / 3, -200, 400 );
+			/* X-dimension */120, -200, 400 );
 
 			histogram10_dat = new TH1D(
 			/* name */nomehisto10.c_str(),
 			/* title */titlehisto10.c_str(),
-			/* X-dimension */600 / 3, -200, 400 );
+			/* X-dimension */120, -200, 400 );
+
+			histogram5_rnd_dat = new TH1D(
+			/* name */nomehisto5_rnd.c_str(),
+			/* title */titlehisto5_rnd.c_str(),
+			/* X-dimension */120, -200, 400 );
+
+			histogram10_rnd_dat = new TH1D(
+			/* name */nomehisto10_rnd.c_str(),
+			/* title */titlehisto10_rnd.c_str(),
+			/* X-dimension */120, -200, 400 );
 		} else {
-			histogram5_dat = histogram5;
-			histogram10_dat = histogram10;
+			histogram5_dat      = histogram5;
+			histogram10_dat     = histogram10;
+			histogram5_rnd_dat  = histogram5_rnd;
+			histogram10_rnd_dat = histogram10_rnd;
 		}
 
 		//dati.print(datisize);
@@ -123,18 +141,24 @@ void read_histograms(std::string nome_cristallo,
 			DBG( std::clog << "delta_x: " << delta_x << std::endl; , ; )
 			if (x_entrata / MICRO_ > -5 and x_entrata / MICRO_ < 5) {
 				//vHistograms.front()->Fill(x_uscita-x_entrata);
-				histogram5_dat->Fill( -delta_x * 1e6 );
+				histogram5_dat->Fill( -delta_x / MICRO_ );
+				//histogram5_rnd_dat->Fill( -delta_x / MICRO_ + rnd->Gaus(-delta_x / MICRO_ ,5) ); // 5 murad of uncertainty
+				histogram5_rnd_dat->Fill( rnd->Gaus(-delta_x / MICRO_ ,5) ); // 5 murad of uncertainty
 			}
 
 			if (x_entrata / MICRO_ > -10 and x_entrata / MICRO_ < 10) {
 				//vHistograms.front()->Fill(x_uscita-x_entrata);
-				histogram10_dat->Fill( -delta_x * 1e6);
+				histogram10_dat->Fill( -delta_x / MICRO_ );
+				//histogram10_rnd_dat->Fill( -delta_x / MICRO_ + rnd->Gaus(-delta_x / MICRO_ ,5) );
+				histogram10_rnd_dat->Fill( rnd->Gaus(-delta_x / MICRO_ ,5) );
 			}
 		}
 
 		// Should be correct in either cases of the "if" above
-		histogram5 = histogram5_dat;
-		histogram10 = histogram10_dat;
+		histogram5      = histogram5_dat;
+		histogram10     = histogram10_dat;
+		histogram5_rnd  = histogram5_rnd_dat;
+		histogram10_rnd = histogram10_rnd_dat;
 		// Technically not necessary now, but maybe I'll add more conditions
 	}  else {
 		cerr << "[ERROR]: File .dat not opened!" << endl;

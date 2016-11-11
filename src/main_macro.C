@@ -73,9 +73,9 @@ int main_macro(int argc, char* argv[]) {
 //	DBG( std::clog << "size: " << sim_data_test.getSize() << std::endl
 //	; , ; )
 	std::vector<const char*> elenco_cristalli_sim {
-		//"STF45",
-		"STF49"
-		//"STF99"
+	"STF45"
+	//		"STF49"
+	//"STF99"
 	};
 
 	char numero_run[FILENAME_MAX];
@@ -99,9 +99,11 @@ int main_macro(int argc, char* argv[]) {
 			DBG( std::clog << "nome_file_dat: " << nome_file_dat << std::endl
 			; , ; )
 			clog << numero_run << std::endl;
-			mions::read_histograms( crystal_name, nome_file_dat, histogram5, histogram5_rnd, histogram10, histogram10_rnd );
+			mions::read_histograms( crystal_name, nome_file_dat, histogram5, histogram5_rnd, histogram10,
+					histogram10_rnd );
 
-			mions::read_histograms_color( crystal_name, nome_file_dat, 10, histogramAm, histogramDech, histogramCh, histogramOth );
+			mions::read_histograms_color( crystal_name, nome_file_dat, 10, histogramAm, histogramDech, histogramCh,
+					histogramOth );
 		}
 
 //		string canvas_name = "Crystal simulation: " + crystal_name;
@@ -123,21 +125,19 @@ int main_macro(int argc, char* argv[]) {
 //		histogramCh->Draw();
 
 		histogramTot = new TH1D(
-						/* name */"total_histo",
-						/* title */"Total Histogram",
-						/* X-dimension */600 / 4, -200, 400 );
-		histogramTot->Add(histogramAm);
-		histogramTot->Add(histogramDech);
-		histogramTot->Add(histogramCh);
-		histogramTot->Add(histogramOth);
+		/* name */"total_histo",
+		/* title */"Total Histogram",
+		/* X-dimension */600 / 4, -200, 400 );
+		histogramTot->Add( histogramAm );
+		histogramTot->Add( histogramDech );
+		histogramTot->Add( histogramCh );
+		histogramTot->Add( histogramOth );
 
-
-
-		histogramAm->   SetFillColorAlpha(kBlue,0.4);
-		histogramDech-> SetFillColorAlpha(kRed,0.4);
-		histogramCh->   SetFillColorAlpha(kGreen,0.4);
-		histogramOth->  SetFillColorAlpha(kMagenta,0.4);
-		histogramTot->  SetLineColor(kGreen);
+		histogramAm->SetFillColorAlpha( kBlue, 0.4 );
+		histogramDech->SetFillColorAlpha( kRed, 0.4 );
+		histogramCh->SetFillColorAlpha( kGreen, 0.4 );
+		histogramOth->SetFillColorAlpha( kMagenta, 0.4 );
+		histogramTot->SetLineColor( kGreen );
 
 		//Normalize, for confronting with the data
 //		histogramAm->Scale(1.0/histogramAm->Integral());
@@ -145,16 +145,13 @@ int main_macro(int argc, char* argv[]) {
 //		histogramDech->Scale(1.0/histogramDech->Integral());
 //		histogramOth->Scale(1.0/histogramOth->Integral());
 
-		auto totint = histogramAm->Integral() +
-				histogramCh->Integral() +
-				histogramDech->Integral() +
-				histogramOth->Integral();
-		histogramAm->Scale(1.0/totint);
-		histogramCh->Scale(1.0/totint);
-		histogramDech->Scale(1.0/totint);
-		histogramOth->Scale(1.0/totint);
-		histogramTot->Scale(1.0/histogramTot->Integral() );
-
+		auto totint = histogramAm->Integral() + histogramCh->Integral() + histogramDech->Integral()
+				+ histogramOth->Integral();
+		histogramAm->Scale( 1.0 / totint );
+		histogramCh->Scale( 1.0 / totint );
+		histogramDech->Scale( 1.0 / totint );
+		histogramOth->Scale( 1.0 / totint );
+		histogramTot->Scale( 1.0 / histogramTot->Integral() );
 
 		//histogramAm   -> Draw();
 		//histogramCh   -> Draw("same");
@@ -162,23 +159,29 @@ int main_macro(int argc, char* argv[]) {
 		//histogramOth  -> Draw("same");
 		//histogramTot  -> Draw("same");
 
-
-
 		// Experimental data
 		string nomefile_dati_sperimentali = "../Old_Macros_Dechanneling/Dechanneling_Histograms.root";
 		TFile * dati_sperimentali = new TFile( nomefile_dati_sperimentali.c_str() );
-		string nomehistoSper = "hdati10_" + string(crys); //TODO Generalizzare a un file
+		string nomehistoSper = "hdati10_" + string( crys ); //TODO Generalizzare a un file
 		TH1D * hDatiSper = (TH1D*) dati_sperimentali->Get( nomehistoSper.c_str() );
 
 //		histogram10->Scale(1.0/histogram10->Integral());
 //		hDatiSper->Scale(1.0/hDatiSper->Integral());
 
-		histogram10->Scale(1.0/histogram10->GetEntries());
-		hDatiSper->Scale(1.0/hDatiSper->GetEntries());
+		histogram10->Scale( 1.0 / histogram10->GetEntries() );
+		histogram10_rnd->Scale( 1.0 / histogram10_rnd->GetEntries() );
+		hDatiSper->Scale( 1.0 / hDatiSper->GetEntries() );
 
-		hDatiSper -> SetLineColor(kRed);
-		histogram10 -> Draw();
-		hDatiSper -> Draw("same");
+		histogram10->SetLineColor( kGreen );
+		histogram10->Draw();
+
+		histogram10_rnd->SetLineColor( kRed );
+		histogram10_rnd->Draw( "same" );
+
+		hDatiSper->SetLineColor( kRed );
+		hDatiSper->SetMarkerStyle( kPlus );
+		hDatiSper->SetMarkerSize( 0.5 );
+		hDatiSper->Draw( "0 P same" );
 
 	}
 
