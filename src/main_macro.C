@@ -74,8 +74,9 @@ int main_macro(int argc, char* argv[]) {
 //	; , ; )
 	std::vector<const char*> elenco_cristalli_sim {
 	// "STF45"
-	// "STF49"
-	"STF45_new"
+	// "STF49_new"
+	 "STF45_new"
+	// "STF49_new"
 	// "STF99"
 	};
 
