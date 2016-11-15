@@ -73,9 +73,10 @@ int main_macro(int argc, char* argv[]) {
 //	DBG( std::clog << "size: " << sim_data_test.getSize() << std::endl
 //	; , ; )
 	std::vector<const char*> elenco_cristalli_sim {
-	"STF45"
-	//		"STF49"
-	//"STF99"
+	// "STF45"
+	// "STF49"
+	"STF45_new"
+	// "STF99"
 	};
 
 	char numero_run[FILENAME_MAX];
@@ -162,7 +163,9 @@ int main_macro(int argc, char* argv[]) {
 		// Experimental data
 		string nomefile_dati_sperimentali = "../Old_Macros_Dechanneling/Dechanneling_Histograms.root";
 		TFile * dati_sperimentali = new TFile( nomefile_dati_sperimentali.c_str() );
-		string nomehistoSper = "hdati10_" + string( crys ); //TODO Generalizzare a un file
+		// string nomehistoSper = "hdati10_" + string( crys ); //TODO Generalizzare a un file
+		string nomehistoSper = "hdati10_" + string( "STF45" );
+
 		TH1D * hDatiSper = (TH1D*) dati_sperimentali->Get( nomehistoSper.c_str() );
 
 //		histogram10->Scale(1.0/histogram10->Integral());
