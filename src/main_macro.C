@@ -113,19 +113,29 @@ int main_macro(int argc, char* argv[]) {
 	TH1D* histogramOth = nullptr;
 	TH1D* histogramTot = nullptr;
 
-	for (auto i = 1; i <= 1000; ++i) {
-		snprintf( numero_run, FILENAME_MAX, "%04d", i ); // print the number of the simulation job to select, with trailing zeroes
-		string nome_file_dat = string( "run" ) + numero_run + "/cr_interaction.dat"; // e.g. run0321/cr_interaction.dat
-		DBG( std::clog << "nome_file_dat: " << nome_file_dat << std::endl
-		; , ; )
-		clog << numero_run << std::endl;
-		mions::read_histograms( crys_namevers, nome_file_dat, histogram5, histogram5_rnd, histogram10,
-				histogram10_rnd );
 
-		mions::read_histograms_color( crys_namevers, nome_file_dat, 10, histogramAm, histogramDech, histogramCh,
-				histogramOth );
-	}
+	auto f = [&] () {
+		for (auto i = 1; i <= 1000; ++i) {
+			snprintf( numero_run, FILENAME_MAX, "%04d", i ); // print the number of the simulation job to select, with trailing zeroes
+			string nome_file_dat = string( "run" ) + numero_run + "/cr_interaction.dat"; // e.g. run0321/cr_interaction.dat
+			DBG( std::clog << "nome_file_dat: " << nome_file_dat << std::endl
+			; , ; )
+			clog << numero_run << std::endl;
+			mions::read_histograms( crys_namevers, nome_file_dat, histogram5, histogram5_rnd, histogram10,
+					histogram10_rnd );
 
+			mions::read_histograms_color( crys_namevers, nome_file_dat, 10, histogramAm, histogramDech, histogramCh,
+					histogramOth );
+		}
+	};
+
+
+	int int_shar = 0;
+	auto f2 = [] () {
+
+	};
+
+	f();
 //		string canvas_name = "Crystal simulation: " + crystal_name;
 //		auto cSim = new TCanvas( "cRcLd", canvas_name.c_str() );
 //		cSim->Divide( 2, 1 );
@@ -183,7 +193,7 @@ int main_macro(int argc, char* argv[]) {
 	string nomefile_dati_sperimentali = "../Old_Macros_Dechanneling/Dechanneling_Histograms.root";
 	TFile * dati_sperimentali = new TFile( nomefile_dati_sperimentali.c_str() );
 	// string nomehistoSper = "hdati10_" + string( crys ); //TODO Generalizzare a un file
-	string nomehistoSper = "hdati10_" + string( "STF45" );
+	string nomehistoSper = "hdati10_" +  nomecrys;
 
 	TH1D * hDatiSper = (TH1D*) dati_sperimentali->Get( nomehistoSper.c_str() );
 
