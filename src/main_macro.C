@@ -200,9 +200,18 @@ int main_macro(int argc, char* argv[]) {
 //		histogram10->Scale(1.0/histogram10->Integral());
 //		hDatiSper->Scale(1.0/hDatiSper->Integral());
 
-	histogram10->Scale( 1.0 / histogram10->GetEntries() );
-	histogram10_rnd->Scale( 1.0 / histogram10_rnd->GetEntries() );
-	hDatiSper->Scale( 1.0 / hDatiSper->GetEntries() );
+	cout << histogram10->Integral() << endl;
+	cout << histogram10_rnd->Integral() << endl;
+	cout << hDatiSper->Integral() << endl << endl;
+
+
+	histogram10->Scale( 1.0 / histogram10->Integral() );
+	histogram10_rnd->Scale( 1.0 / histogram10_rnd->Integral() );
+	hDatiSper->Scale( 1.0 / hDatiSper->Integral() );
+
+	cout << histogram10->Integral() << endl;
+	cout << histogram10_rnd->Integral() << endl;
+	cout << hDatiSper->Integral() << endl;
 
 	histogram10->SetLineColor( kGreen );
 	histogram10->Draw();

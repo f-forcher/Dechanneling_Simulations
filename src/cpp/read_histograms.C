@@ -135,7 +135,7 @@ void read_histograms(std::string nome_cristallo,
 			ev = dati.getEvent( i );
 			// #1=ipart 2=nturn 3=icoll 4=previous interaction 5=interaction
 			//          6=kick_x 7=kick_y 8=E_in 9=E_out 10=xp_in 11=yp_in 12=cr_ang
-			Double_t x_entrata = ev[9];
+			Double_t x_entrata = rnd->Gaus(ev[9] , 4.4 * MICRO_);
 			Double_t delta_x = ev[5]; //x_uscita - x_entrata
 
 			DBG( std::clog << "delta_x: " << delta_x << std::endl; , ; )
