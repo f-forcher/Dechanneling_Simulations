@@ -37,12 +37,14 @@
 #include <TF1.h>
 #include <TH1D.h>
 
+
 //#include "analizza_dechanneling.h"
 #include "dbg_macro.h"
 //#include "Hello.h"
 #include "DatiSimulazioni.h"
 #include "read_histograms.h"
 #include "read_histograms_color.h"
+#include "read_histograms_VRAM.h"
 //#include "my_typedefs.h"
 
 //GLOBALS meglio in un file a parte
@@ -223,6 +225,34 @@ int main_macro(int argc, char* argv[]) {
 	hDatiSper->SetMarkerStyle( kPlus );
 	hDatiSper->SetMarkerSize( 0.5 );
 	hDatiSper->Draw( "0 P same" );
+
+
+
+
+
+
+	/*********************************************************************************************/
+	/*********************************************************************************************/
+	/*********************************************************************************************/
+	/**
+	 *  VRAM simulation
+	 */
+	/*********************************************************************************************/
+	auto f = [&] () {
+		for (auto i = 1; i <= 1000; ++i) {
+			snprintf( numero_run, FILENAME_MAX, "%04d", i ); // print the number of the simulation job to select, with trailing zeroes
+			string nome_file_dat = string( "run" ) + numero_run + "/cr_interaction.dat"; // e.g. run0321/cr_interaction.dat
+			DBG( std::clog << "nome_file_dat: " << nome_file_dat << std::endl
+			; , ; )
+			clog << numero_run << std::endl;
+			mions::read_histograms( crys_namevers, nome_file_dat, histogram5, histogram5_rnd, histogram10,
+					histogram10_rnd );
+
+			mions::read_histograms_color( crys_namevers, nome_file_dat, 10, histogramAm, histogramDech, histogramCh,
+					histogramOth );
+		}
+	};
+
 
 //	}
 
