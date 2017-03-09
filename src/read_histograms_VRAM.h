@@ -23,7 +23,7 @@ namespace mions {
 void read_histograms_VRAM(std::string nome_cristallo,
 					 std::string nomefiledati_dat,
 					 TH2D*& histogram,
-					 TH1D*& histogram5_rnd
+					 TH2D*& histogram5_rnd
 					 );
 
 }
@@ -31,7 +31,7 @@ void read_histograms_VRAM(std::string nome_cristallo,
 // Altrimenti includi il file della macro. Nel compilatore naturalmente direbbe multiple definition quando linka l'altro
 // file.
 
-#include "read_histograms_VRAM.C"
+#include "cpp/read_histograms_VRAM.C"
 
 #endif
 

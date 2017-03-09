@@ -41,9 +41,9 @@ for ((a=1; a <= LIMIT ; a++))
   cat > run$index/SixTr$index.job << EOF
   #!/bin/bash
   cp $PWD/clean_input/* .
-  cp $PWD/../H8_initial_distr.dat .
+  cp $PWD/../H8_initial_distr_xp_uniforme.dat .
 
-  ./make_distr H8_initial_distr.dat $a 100
+  ./make_distr H8_initial_distr_xp_uniforme.dat $a 100
   ./SixTrack_dan_RELEASE_CRYSTAL > screenout
 
   cp cr_interaction.dat $PWD/run$index/
