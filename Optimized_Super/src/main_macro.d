@@ -78,7 +78,11 @@ src/main_macro.o: ../src/main_macro.C \
  /home/fforcher/ROOT/v6-06-08/include/Math/ParamFunctor.h \
  /home/fforcher/ROOT/v6-06-08/include/TH1D.h ../src/dbg_macro.h \
  ../src/DatiSimulazioni.h ../src/read_histograms.h \
- ../src/read_histograms_color.h
+ ../src/read_histograms_color.h ../src/read_histograms_VRAM.h \
+ /home/fforcher/ROOT/v6-06-08/include/TH2D.h \
+ /home/fforcher/ROOT/v6-06-08/include/TH2.h \
+ /home/fforcher/ROOT/v6-06-08/include/TMatrixFBasefwd.h \
+ /home/fforcher/ROOT/v6-06-08/include/TMatrixDBasefwd.h
 
 /home/fforcher/ROOT/v6-06-08/include/TROOT.h:
 
@@ -243,3 +247,13 @@ src/main_macro.o: ../src/main_macro.C \
 ../src/read_histograms.h:
 
 ../src/read_histograms_color.h:
+
+../src/read_histograms_VRAM.h:
+
+/home/fforcher/ROOT/v6-06-08/include/TH2D.h:
+
+/home/fforcher/ROOT/v6-06-08/include/TH2.h:
+
+/home/fforcher/ROOT/v6-06-08/include/TMatrixFBasefwd.h:
+
+/home/fforcher/ROOT/v6-06-08/include/TMatrixDBasefwd.h:
