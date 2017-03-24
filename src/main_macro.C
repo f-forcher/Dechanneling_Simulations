@@ -73,6 +73,12 @@ int main_macro(int argc, char* argv[]) {
 						string("") :
 						string("_") + string( argv[2] ));
 
+	// Sigma of noise, got from alignment run
+	stringstream ss;
+	double noise_deltaxp;
+	ss << argv[3];
+	ss >> noise_deltaxp;
+
 	// Save the directory of the project (remember you are expected to start it from the
 	// top folder of the repo)
 	getcwd( PROJECT_DIR, FILENAME_MAX );
@@ -227,6 +233,7 @@ int main_macro(int argc, char* argv[]) {
 
 
 
+// TODO se devo simulare sia dechanneling che VRAM, il suffisso deve essere lo stesso (new3 o newVRAM3), mettere altro parametro
 	/*********************************************************************************************/
 	/**
 	 *  VRAM simulation
@@ -241,7 +248,7 @@ int main_macro(int argc, char* argv[]) {
 			DBG( std::clog << "(VRAM) nome_file_dat: " << nome_file_dat << std::endl
 			; , ; )
 			clog << numero_run << std::endl;
-			mions::read_histograms_VRAM( crys_namevers, nome_file_dat, histogram2D, histogram2D_rnd );
+			mions::read_histograms_VRAM( crys_namevers, nome_file_dat, histogram2D, histogram2D_rnd, noise_deltaxp);
 		}
 	};
 	f2();
@@ -253,7 +260,8 @@ int main_macro(int argc, char* argv[]) {
 	histogram2D->Draw();
 	histogram2D_rnd->Draw();
 
-	TFile f2D("2D_deflectionplot.root","RECREATE");
+	string output_file_name = "2D_deflectionplot_" + nomecrys + ".root";
+	TFile f2D(output_file_name.c_str(),"RECREATE");
 	f2D.cd();
 	histogram2D->Write();
 	histogram2D_rnd->Write();

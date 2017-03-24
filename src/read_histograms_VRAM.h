@@ -23,7 +23,8 @@ namespace mions {
 void read_histograms_VRAM(std::string nome_cristallo,
 					 std::string nomefiledati_dat,
 					 TH2D*& histogram,
-					 TH2D*& histogram5_rnd
+					 TH2D*& histogram5_rnd,
+					 double noise_deltaxp // [murad]
 					 );
 
 }
