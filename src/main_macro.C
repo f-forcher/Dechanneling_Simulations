@@ -75,9 +75,16 @@ int main_macro(int argc, char* argv[]) {
 
 	// Sigma of noise, got from alignment run
 	stringstream ss;
+	double noise_initialx;
 	double noise_deltaxp;
+
 	ss << argv[3];
+	ss >> noise_initialx;
+	ss.clear();
+	ss << argv[4];
 	ss >> noise_deltaxp;
+
+
 
 	// Save the directory of the project (remember you are expected to start it from the
 	// top folder of the repo)
@@ -248,7 +255,7 @@ int main_macro(int argc, char* argv[]) {
 			DBG( std::clog << "(VRAM) nome_file_dat: " << nome_file_dat << std::endl
 			; , ; )
 			clog << numero_run << std::endl;
-			mions::read_histograms_VRAM( crys_namevers, nome_file_dat, histogram2D, histogram2D_rnd, noise_deltaxp);
+			mions::read_histograms_VRAM( crys_namevers, nome_file_dat, histogram2D, histogram2D_rnd, noise_initialx, noise_deltaxp);
 		}
 	};
 	f2();
@@ -258,7 +265,7 @@ int main_macro(int argc, char* argv[]) {
 	c2Dorig->cd();
 
 	histogram2D->Draw();
-	histogram2D_rnd->Draw();
+	histogram2D_rnd->Draw("COLZ");
 
 	string output_file_name = "2D_deflectionplot_" + nomecrys + ".root";
 	TFile f2D(output_file_name.c_str(),"RECREATE");

@@ -53,7 +53,8 @@ void read_histograms_VRAM(std::string nome_cristallo,
 					 std::string nomefiledati_dat,
 					 TH2D*& histogram,
 					 TH2D*& histogram_rnd,
-					 double noise_deltaxp
+					 double noise_initialx, // [murad]
+					 double noise_deltaxp // [murad]
 					 ) {
 
 
@@ -137,7 +138,8 @@ void read_histograms_VRAM(std::string nome_cristallo,
 			//DBG( std::clog << "delta_x: " << delta_x << std::endl; , ; )
 
 			histogram_dat->Fill(-x_entrata / MICRO_, -delta_x / MICRO_);
-			histogram_rnd_dat->Fill( rnd->Gaus(-x_entrata / MICRO_ , 2.8), rnd->Gaus(-delta_x / MICRO_ , noise_deltaxp) );
+			//histogram_rnd_dat->Fill( rnd->Gaus(-x_entrata / MICRO_ , 2.8), rnd->Gaus(-delta_x / MICRO_ , noise_deltaxp) );
+			histogram_rnd_dat->Fill( rnd->Gaus(-x_entrata / MICRO_ , noise_initialx), rnd->Gaus(-delta_x / MICRO_ , noise_deltaxp) );
 		}
 
 		// Should be correct in either cases of the "if" above
